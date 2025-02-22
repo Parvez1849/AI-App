@@ -1,62 +1,523 @@
-.App {
-  text-align: center;
-  height:100vh;
-  width:100%;
-  background-color: #282c34;
+/* General Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background-color: #f5f7fa;
+  color: #333;
   display: flex;
-  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
 }
 
-.box{
-width: 50%;
-display: flex;
-flex-direction: column;
-justify-content: center;
-align-items: center;
-gap:50px;
+/* Chat container */
+.App {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100%;
 }
 
-.profile-pic{
-  width: 200px;
-  height: 200px;
-  border-radius: 50%;
-  box-shadow: 5px 5px 10px royalblue;
+.chat-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  width: 100%;
+  max-width: 800px;
+  height: 80vh;
+  background-color:rgb(255, 255, 255);
+  border-radius: 15px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
   overflow: hidden;
 }
 
-textarea{
-  width: 80%;
-  height: 300px;
-border: none;
-outline: none;
-border-radius: 10px;
-box-shadow: 5px 5px 10px white;
-background: transparent;
-color: white;
-padding: 10px;
-font-size: 20px;
+/* Chat box with scrollable messages */
+.chat-box {
+  padding: 20px;
+  overflow-y: auto;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  scrollbar-width: none;
 }
 
-button{
-  width: 80%;
-  border: none;
-  outline: none;
-  background-color: royalblue;
+.chat-box::-webkit-scrollbar {
+  display: none;
+}
+
+/* Individual message styles */
+.message {
+  display: flex;
+  margin-bottom: 10px;
+  width: 100%;
+}
+
+.message.user {
+  justify-content: flex-end;
+}
+
+.message.ai {
+  justify-content: flex-start;
+}
+
+/* Chat bubble styling */
+.bubble {
+  max-width: 100%; /* Make the bubble occupy maximum width */
+  width: auto;
+  padding: 15px;
+  border-radius: 20px;
+  background-color:rgba(241, 241, 241, 0.81);
+  font-size: 1rem;
+  line-height: 1.5;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  word-wrap: break-word;
+  margin-left: 5px;
+  margin-right: 5px;
+}
+
+.message.user .bubble {
+  background-color: #e0e0e0; /* Bright blue for user */
   color: white;
-  padding: 10px;
-  font-size: 20px;
+  border-bottom-right-radius: 0;
+}
+
+.message.ai .bubble {
+  background-color: #e0e0e0; /* Neutral light gray for AI */
+  color: #333;
+  border-bottom-left-radius: 0;
+}
+
+/* Code block styling */
+pre {
+  background-color: #f5f5f5;
+  padding: 15px;
   border-radius: 10px;
+  overflow-x: auto;
+  margin-top: 10px;
+  white-space: pre-wrap; /* For wrapping long code */
+  word-wrap: break-word;
+}
+
+code {
+  font-family: monospace;
+  color: #333;
+  display: block;
+}
+
+/* Copy button aligned with the code block */
+.copy-btn {
+  background-color: transparent;
+  border: none;
+  color: #00bcd4; /* Teal color for copy button */
+  cursor: pointer;
+  margin-top: 5px;
+  font-size: 0.9rem;
+  text-align: right;
+  display: block;
+}
+
+.copy-btn:hover {
+  text-decoration: underline;
+}
+
+/* Input box */
+.input-box {
+  display: flex;
+  padding: 15px;
+  background-color: #f9f9f9;
+  border-top: 1px solid #e0e0e0;
+}
+
+textarea {
+  flex: 1;
+  padding: 15px;
+  font-size: 1rem;
+  border: none;
+  border-radius: 10px;
+  resize: none;
+  margin-right: 10px;
+  background-color: #f1f1f1;
+  outline: none;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s ease;
+}
+
+textarea:focus {
+  background-color: white;
+}
+
+button {
+  padding: 15px 20px;
+  font-size: 1rem;
+  background-color:rgb(0, 113, 212); /* Teal for send button */
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #0097a7; /* Darker teal on hover */
+}
+
+/* Clear Chat button */
+.clear-btn {
+  margin-top: 10px;
+  padding: 10px;
+  background-color: #f44336; /* Red for clear button */
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.clear-btn:hover {
+  background-color: #e53935;
+}
+
+/* Disabled state for textarea and buttons */
+textarea[disabled],
+button[disabled] {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Avatar and message content */
+.message-content {
+  display: flex;
+  align-items: flex-start;
+  width: 100%;
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.message-text {
+  background-color: #f1f1f1;
+  padding: 10px;
+  border-radius: 10px;
+  max-width: 90%;
+  color:black;
+}
+
+.message.user .message-text {
+  background-color:#e0e0e0; /* Light blue for user text background */
+}
+
+.message.ai .message-text {
+  background-color: #e0e0e0; /* Light gray for AI text background */
+}
+
+/* Chat options and buttons */
+.chat-options {
+  display: flex;
+  flex-direction: column;
+  background-color:rgb(143, 117, 117);
+  border-radius: 4px;
+  padding: 5px;
+  font-size: 12px; /* Make options smaller */
+}
+
+.chat-options button {
+  display: flex;
+  align-items: center;
+  margin: 3px 0;
+  border: none;
+  background: none;
   cursor: pointer;
 }
 
-.pic{
-  width: 220px;
-  height: 200px;
+.chat-options button svg {
+  margin-right: 5px;
 }
 
-.lebel{
-  color: white;
-  font-size: 20px;
+.chat-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
 }
+
+.chat-buttons button {
+  width: 48%; /* Share equal width */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  font-size: 16px;
+}
+
+.chat-buttons button svg {
+  margin-right: 5px;
+}
+
+/* Previous chat styles */
+.previous-chat {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  border-bottom: 1px solid #ccc;
+}
+
+.chat-title {
+  flex-grow: 1;
+  cursor: pointer;
+}
+
+.chat-menu {
+  margin-left: 10px;
+}
+
+.chat-options {
+  display: flex;
+  justify-content: space-between;
+}
+
+.chat-options button {
+  margin: 0 5px;
+}
+
+
+
+@media (max-width: 768px) {
+  /* Adjust chat container for smaller screens like tablets or mobile */
+  .chat-container {
+    height: 90vh;
+    max-width: 100%;
+    border-radius: 0; /* Remove rounded corners on mobile */
+  }
+
+  .bubble {
+    font-size: 0.9rem; /* Slightly reduce font size */
+    padding: 10px; /* Less padding on bubbles */
+  }
+
+  textarea, button {
+    font-size: 0.9rem;
+    padding: 10px; /* Smaller padding for buttons */
+  }
+
+  .avatar {
+    width: 30px; /* Adjust avatar size */
+    height: 30px;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Additional adjustments for very small devices */
+  .bubble {
+    font-size: 0.8rem; /* Even smaller font size */
+    padding: 8px; /* Reduce padding more */
+  }
+
+  .chat-buttons button {
+    font-size: 0.85rem;
+    padding: 8px; /* Smaller buttons for very small screens */
+  }
+}
+
+
+
+
+
+/* General Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background-color: #f5f7fa;
+  color: #333;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden; /* Prevents body from expanding */
+}
+
+/* Chat container */
+.App {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;  /* Fixed height for the entire app */
+  width: 100vw;   /* Full width of the viewport */
+  overflow: hidden; /* Prevents overflow */
+}
+
+.chat-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  width: 100%;
+  max-width: 800px;
+  height: 80vh; /* Fixed height to prevent resizing */
+  background-color: #fff;
+  border-radius: 15px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  position: relative; /* Relative positioning to make inner divs scrollable */
+}
+
+/* Chat box with scrollable messages */
+.chat-box {
+  padding: 20px;
+  overflow-y: auto; /* Allows scrolling when content grows */
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.chat-box::-webkit-scrollbar {
+  display: none; /* Hides scrollbar for a cleaner look */
+}
+
+/* Individual message styles */
+.message {
+  display: flex;
+  margin-bottom: 10px;
+  width: 100%;
+}
+
+.message.user {
+  justify-content: flex-end;
+}
+
+.message.ai {
+  justify-content: flex-start;
+}
+
+/* Chat bubble styling */
+.bubble {
+  max-width: 100%; /* Make the bubble occupy maximum width */
+  width: auto;
+  padding: 15px;
+  border-radius: 20px;
+  background-color: rgba(241, 241, 241, 0.81);
+  font-size: 1rem;
+  line-height: 1.5;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  word-wrap: break-word;
+  margin-left: 5px;
+  margin-right: 5px;
+}
+
+.message.user .bubble {
+  background-color: #e0e0e0;
+  color: white;
+  border-bottom-right-radius: 0;
+}
+
+.message.ai .bubble {
+  background-color: #e0e0e0;
+  color: #333;
+  border-bottom-left-radius: 0;
+}
+
+/* Input box */
+.input-box {
+  display: flex;
+  padding: 15px;
+  background-color: #f9f9f9;
+  border-top: 1px solid #e0e0e0;
+  position: relative;
+  bottom: 0;
+  width: 100%;
+}
+
+/* Chat buttons and others unchanged */
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .chat-container {
+    height: 90vh; /* Adjust height for smaller screens */
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .bubble {
+    font-size: 0.8rem;
+    padding: 8px;
+  }
+}
+
+.first {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 50%; /* Position it in the middle between top and bottom */
+  font-size: 24px; /* Make the text bigger */
+  font-weight: bold;
+  color: #555; /* You can adjust the color as needed */
+  padding: 20px;
+  text-align: center;
+  margin: 0 auto; /* Center it horizontally */
+}
+
+@media (max-width: 768px) {
+  .first {
+    font-size: 20px; /* Slightly smaller text for tablets */
+  }
+}
+
+@media (max-width: 480px) {
+  .first {
+    font-size: 16px; /* Smaller text for mobile devices */
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
